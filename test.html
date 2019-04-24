@@ -1,0 +1,171 @@
+<html>
+    <head>
+    <meta charset="UTF-8">
+        <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+        <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
+        <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+        <script src="chart.js"></script>
+        <style>
+        .chart{
+               width:85%;
+               margin: auto;
+        }
+        .charts{
+            position:relative;
+        }
+        </style>
+    </head>
+
+<body>
+
+    <div class="app">
+    <input type="button" @click="ttt()" value="点我异步获取数据(Get)">
+        <div class="charts">
+            {{ message }}
+            <!-- Bar -->
+            <div class="line chart">
+                <line-chart v-bind:line-datas="linedatas"></line-chart>
+            </div>
+             
+            <div class="line chart">
+                <!-- Bar -->
+                <bar-chart v-bind:bar-datas="bardatas"></bar-chart>
+            </div>
+            
+            <div class="line chart">
+                <!-- doughnut -->
+                <doughnut-chart v-bind:doughnut-datas="doughnutdatas"></doughnut-chart>
+            </div>
+            <div class="line chart">
+                <!-- pie -->
+                <pie-chart v-bind:pie-datas="piedatas"></pie-chart>
+            </div>
+        </div>
+        
+    </div>
+
+</body>
+        
+        
+        <script>
+        var sss={
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            datasets: [
+            {
+            label: "My First dataset",
+            fillColor: "rgba(220,220,220,0.2)",
+            strokeColor: "rgba(220,220,220,1)",
+            pointColor: "rgba(220,220,220,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(220,220,220,1)",
+            data: [65, 59, 80, 81, 56, 55, 40]
+            },
+            {
+            label: "My Second dataset",
+            fillColor: "rgba(151,187,205,0.2)",
+            strokeColor: "rgba(151,187,205,1)",
+            pointColor: "rgba(151,187,205,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(151,187,205,1)",
+            data: [28, 48, 40, 19, 86, 27, 90]
+            }
+            ]
+            };
+        
+        function print(o){
+            console.log(o)
+        }
+        const BaseURL = "http://localhost:5000/";
+       
+window.onload = function(){
+        var vm = new Vue({
+          el: '.app',
+          data: {
+            message: 'Hello Vue Chart !',
+            linedatas:"",
+            bardatas:"",
+            doughnutdatas:"",
+            piedatas:""
+          },
+          components: {
+            // <my-component> 将只在父组件模板中可用
+            'line-chart': vue_line_chart,
+            'bar-chart': vue_bar_chart,
+            'doughnut-chart': vue_doughnut_chart,
+            'pie-chart': vue_pie_chart
+          },
+          created: function(){
+             let that = this;
+             //曲线
+/*           that.post("defaultData").then(function(body){
+                let ajax_linedatas = body;
+
+                 that.linedatas=ajax_linedatas;
+
+                 //bar
+                 that.bardatas=ajax_linedatas;
+                 
+                 
+                 that.doughnutdatas=ajax_linedatas;
+                 
+                 
+                 that.piedatas=ajax_linedatas;
+        });
+             
+            */
+                         
+                         
+            let ajax_linedatas =sss
+             that.linedatas=ajax_linedatas;
+
+             //bar
+             that.bardatas=ajax_linedatas;
+             
+             
+             that.doughnutdatas=ajax_linedatas;
+
+             that.piedatas=ajax_linedatas;
+
+          },
+           methods: {
+            sleep(d) {
+                return new Promise((resolve) => setTimeout(resolve, d))
+            },
+            post:function(name,args){
+                let that = this;
+              return   new Promise(function(resolve, reject) {
+                     that.$http.post(BaseURL+name,{emulateJSON:true}).then(function(res){
+                        resolve(res.body);
+                    },function(res){
+                        console.log(res.status);
+                        console.log(res);
+                    });
+                  });
+                },
+              ttt: function(){
+                let that = this;
+                this.$http.post(BaseURL+"defaultData",{emulateJSON:true}).then(function(res){
+                        let ajax_linedatas =res.body ;
+                        that.linedatas=ajax_linedatas;
+                         //bar
+                         that.bardatas=ajax_linedatas;
+                         
+                         that.doughnutdatas=ajax_linedatas;
+                         
+                         that.piedatas=ajax_linedatas;
+                    },function(res){
+                        console.log(res.status);
+                        console.log(res);
+                    });
+              }
+               
+            }
+        
+        })
+}
+        
+        </script>
+</html>
